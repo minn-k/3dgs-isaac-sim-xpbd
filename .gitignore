@@ -1,0 +1,54 @@
+# Local editor and environment state
+.vs/
+.vscode/
+.idea/
+.env
+.env.*
+.local/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+
+# Build outputs and native binaries
+build/
+out/
+install/
+CMakeFiles/
+CMakeCache.txt
+*.obj
+*.o
+*.dll
+*.lib
+*.exp
+*.pdb
+*.ilk
+*.exe
+*.so
+
+# Generated data and local runs
+_cache/
+logs/
+probe_out/
+*.log
+*.db
+*.ply
+*.npz
+*.npy
+*.bin
+*.pt
+*.pth
+*.ckpt
+
+# Optional downloaded demo bundle
+examples/wolf/wolf_crop.ply
+examples/wolf/wolf_graph.npz
+examples/wolf/wolf_splat.usd
+
+# Internal work products
+portfolio_*/
+*.pptx
+*.docx
+*.mov
+*.zip

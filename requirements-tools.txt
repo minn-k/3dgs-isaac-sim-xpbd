@@ -1,0 +1,4 @@
+# Dependencies for offline preparation tools (tools/import_graph.py and tools/prepare_splat.py).
+# Isaac Sim supplies its own Kit/PXR/Omni Python packages at runtime.
+numpy>=1.24
+scipy>=1.10
