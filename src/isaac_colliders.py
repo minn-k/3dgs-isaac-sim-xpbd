@@ -101,30 +101,6 @@ class ColliderScene:
         kin = it.get("kin")
         return it["body"] is not None and not (kin and kin.Get())
 
-    def apply_reactions(self, items, push, centroid, particle_mass, dt):
-        """양방향 결합: 이번 스텝에 충돌체가 가우시안에 준 충격량(= 입자 질량 × 밀어낸 변위 합 / dt)의 반대를
-        그 충돌체의 PhysX 동적 강체에 접촉 중심에서 준다 (뉴턴 3법칙). items / push / centroid 는 같은 스텝·같은 순서.
-        반환: 적용한 (경로, 충격량 [kg·m/s]) 목록."""
-        import carb
-        import omni.physx
-        import omni.usd
-        from pxr import PhysicsSchemaTools
-
-        sim_if = omni.physx.get_physx_simulation_interface()
-        stage_id = omni.usd.get_context().get_stage_id()
-        applied = []
-        for it, dp, c in zip(items, push, centroid):
-            if not self.is_dynamic(it):
-                continue
-            J = -(particle_mass * self.s / dt) * (self.Rm @ np.asarray(dp, float))    # 월드 [kg·m/s]
-            if not np.isfinite(J).all() or float(np.linalg.norm(J)) < 1e-9:
-                continue
-            p = self.s * (self.Rm @ np.asarray(c, float)) + self.tw
-            sim_if.apply_force_at_pos(stage_id, PhysicsSchemaTools.sdfPathToInt(it["body"]),
-                                      carb.Float3(*[float(v) for v in J]), carb.Float3(*[float(v) for v in p]), "Impulse")
-            applied.append((it["body"], J))
-        return applied
-
     def _current_world(self, it):
         # 운동학 강체는 USD(스크립트·뷰포트)가 자세를 정한다 — USD 가 가장 최신.
         dynamic = self.is_dynamic(it)

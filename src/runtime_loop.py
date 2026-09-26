@@ -205,7 +205,6 @@ else:
             _a_sc.Set(Gf.Vec3d(_s, _s, _s))
             _cw = _s * (_Rm @ _c_src) + _tw
             _extra = []
-            _extra = []
 
             # ── Isaac 물리 장면: 바닥·중력·충돌 물체는 전부 Isaac 쪽에서 읽는다 (가우시안만 우리 XPBD) ──
             if not any(_p.IsA(UsdPhysics.Scene) for _p in _stage.Traverse()):
@@ -843,11 +842,11 @@ else:
                                          reg_mid=np.where((u > 0.4) & (u < 0.6) & (off < 0.06))[0],
                                          span0=float(np.linalg.norm(ga - gb)))
                             print(f"[duo] grabbed A {n[0]} / B {n[1]} Gaussians"
-                                  + (f", {np.linalg.norm(ga - gb) * 100:.1f} cm apart, torso band "
+                                  + (f", {np.linalg.norm(ga - gb) * 100:.1f} cm apart, middle band "
                                      f"{len(d['reg_mid'])} Gaussians" if n[0] and n[1] else " - not both hands: skip"))
                         m = _duo_metrics(st, W)
                         print(f"[duo] {tl:5.2f} s  end of '{prev.strip()}': holding A {m['held'][0]} / B {m['held'][1]} | "
-                              f"grip span {m['span']:+6.1f} mm | rotation about grip axis head {m['rot'][0]:+6.1f}, torso "
+                              f"grip span {m['span']:+6.1f} mm | rotation about grip axis grip A {m['rot'][0]:+6.1f}, middle "
                               f"{m['rot'][1]:+6.1f}, grip B {m['rot'][2]:+6.1f} deg | deformation vs rest p95 {m['deform']:5.1f} mm"
                               f" | tip error A {m['tip_err'][0]:4.1f} B {m['tip_err'][1]:4.1f} mm")
                         d["rows"].append((prev.strip(), tl, m))
@@ -861,7 +860,7 @@ else:
                         print("[duo] cycle done:")
                         for ph, tt, m in d["rows"]:
                             print(f"         {ph:15s} t {tt:5.2f} s  span {m['span']:+6.1f} mm  rot grip A {m['rot'][0]:+6.1f} "
-                                  f"torso {m['rot'][1]:+6.1f} grip B {m['rot'][2]:+6.1f}  deform p95 {m['deform']:5.1f} mm")
+                                  f"middle {m['rot'][1]:+6.1f} grip B {m['rot'][2]:+6.1f}  deform p95 {m['deform']:5.1f} mm")
                     if d.get("loop", DUO_LOOP):
                         d.update(planned=False, q_end=d["q_end"], summary=False)
                     else:

@@ -12,50 +12,17 @@ import argparse
 import json
 import math
 import os
+import sys
+from pathlib import Path
 
 import numpy as np
 
+_SRC = Path(__file__).resolve().parents[1] / "src"
+if str(_SRC) not in sys.path:
+    sys.path.insert(0, str(_SRC))
 
-def read_ply(path):
-    """binary_little_endian, vertex 원소 하나, 전부 float 속성인 3DGS PLY 를 구조체 배열로 읽는다."""
-    header = []
-    with open(path, "rb") as f:
-        while True:
-            line = f.readline()
-            if not line:
-                raise ValueError(f"PLY header 가 끝나지 않았다: {path}")
-            s = line.decode("ascii").rstrip("\r\n")
-            header.append(s)
-            if s == "end_header":
-                break
-        offset = f.tell()
-    if "format binary_little_endian 1.0" not in header:
-        raise ValueError("binary_little_endian PLY 만 지원한다")
-    count = None
-    names = []
-    for s in header:
-        tok = s.split()
-        if not tok:
-            continue
-        if tok[0] == "element":
-            if tok[1] != "vertex" or count is not None:
-                raise ValueError(f"vertex 원소 하나만 지원한다: {s}")
-            count = int(tok[2])
-        elif tok[0] == "property":
-            if tok[1] != "float":
-                raise ValueError(f"float 이 아닌 속성: {s}")
-            names.append(tok[2])
-    data = np.fromfile(path, dtype=np.dtype([(n, "<f4") for n in names]), count=count, offset=offset)
-    if data.shape[0] != count:
-        raise ValueError(f"vertex {count} 개를 기대했는데 {data.shape[0]} 개만 읽혔다")
-    return header, data
+from splat_io import read_ply, write_ply
 
-
-def write_ply(path, header, data):
-    out = [f"element vertex {data.shape[0]}" if s.startswith("element vertex") else s for s in header]
-    with open(path, "wb") as f:
-        f.write(("\n".join(out) + "\n").encode("ascii"))
-        f.write(data.tobytes())
 
 
 def rotation_between(a, b):
@@ -95,7 +62,7 @@ def quat_wxyz(R):
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--ply", required=True)
-    ap.add_argument("--crop-json", help="crop_min / crop_max 가 든 실험 설정 JSON (ablation/<scene>/case_*.json)")
+    ap.add_argument("--crop-json", help="crop_min / crop_max 를 포함한 JSON 설정 파일")
     ap.add_argument("--crop-min", type=float, nargs=3)
     ap.add_argument("--crop-max", type=float, nargs=3)
     ap.add_argument("--cameras", required=True, help="3DGS 출력의 cameras.json (rotation = camera-to-world)")
@@ -172,7 +139,7 @@ def main():
 
     raw_h = float(Q[:, 2].max() - Q[:, 2].min())
     xf = {
-        "source_ply": os.path.abspath(args.ply),
+        "source_ply": Path(args.ply).name,
         "crop_min": lo.tolist() if lo is not None else None,
         "crop_max": hi.tolist() if hi is not None else None,
         "splats": int(crop.shape[0]),

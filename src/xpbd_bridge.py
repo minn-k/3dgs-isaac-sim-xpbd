@@ -5,7 +5,6 @@ and collision proxies. It returns deformed Gaussian positions, orientations,
 and scales in the same PLY/USD ordering.
 """
 import ctypes
-import json
 import os
 
 import numpy as np
@@ -41,15 +40,6 @@ def load_inputs(d, name):
         "stiff": np.ascontiguousarray(g["stiff"][keep].astype(np.float32)),
     }
 
-
-def world_ground(d, name, ground_z=0.0, gravity=9.81):
-    """Isaac 월드의 수평 바닥 z = ground_z 와 중력 [m/s²] 을 원본 3DGS 좌표계의 (up, height, gravity, 단위배율) 로."""
-    xf = json.load(open(os.path.join(d, f"{name}_transform.json"), encoding="utf-8"))
-    up = np.array(xf["up_source"], dtype=np.float64)    # R 이 up_source → +Z 로 보낸다
-    s = float(xf["scale"])
-    tz = float(xf["translate"][2])
-    # world z = s · (up · p) + tz  →  z = ground_z  ⇔  up · p = (ground_z − tz) / s
-    return up, (ground_z - tz) / s, gravity / s, s
 
 
 class XPBD:

@@ -1,11 +1,11 @@
 """
-두 Franka 가 물체 하나의 양 끝을 잡고 당기기(stretch)·비틀기(twist) — live_drop.py 의 DEMO_MODE = "duo" (live_duo.py).
+두 Franka가 물체 양 끝을 잡고 당기기(stretch)·비틀기(twist)를 수행하는 runtime_loop.py의 duo 모드.
 
   팔 A (뒤, -X) : 물체의 가장 높은 곳(머리 정수리)을 위에서 잡는다.
   팔 B (앞, +X) : 바닥 가까이에서 B 쪽으로 가장 튀어나온 곳(발)을 위에서 잡는다.
   stretch : 두 손이 각자 자기 쪽으로 크게 당긴다 (A 는 뒤·위, B 는 앞·위) → 버틴다 → 돌아온다.
   twist   : (당긴 채로) 두 손이 두 손을 잇는 선 둘레로 반대 방향으로 천천히 돈다 (빨래 짜기) → 버틴다 → 되돌린다.
-  잡기·놓기는 live_drop.py 가 구간 이름으로 한다: 'close' 가 끝나면 두 손 모두 잡고, 'open' 에 들어가면 놓는다.
+  잡기·놓기는 runtime_loop.py의 구간 이름으로 처리한다: 'close'가 끝나면 두 손 모두 잡고, 'open'에 들어가면 놓는다.
 수동 조종(HandServo): 손마다 목표 자세로 속도 제한을 두고 따라간다 — 조종 창의 당기기·들기·비틀기 슬라이더가 목표를 정한다.
 """
 import numpy as np

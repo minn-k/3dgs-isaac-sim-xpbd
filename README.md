@@ -65,4 +65,4 @@ docs/      architecture, setup, build, data policy, and media policy
 
 ## Related work
 
-apg-gs-chainmail will be released separately for the earlier ChainMail-focused viewer and paper scope. This repository contains the later OpenUSD, Isaac Sim, CUDA XPBD, and two-arm interaction integration.
+[apg-gs-chainmail](https://github.com/minn-k/apg-gs-chainmail) contains the earlier ChainMail-focused viewer and paper scope. This repository contains the later OpenUSD, Isaac Sim, CUDA XPBD, and two-arm interaction integration.

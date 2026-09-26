@@ -24,6 +24,5 @@ if not runtime.is_file():
 scope = {
     "__name__": "__main__",
     "__file__": str(runtime),
-    "DEMO_MODE_OVERRIDE": "duo",
 }
 exec(compile(runtime.read_text(encoding="utf-8"), str(runtime), "exec"), scope)
