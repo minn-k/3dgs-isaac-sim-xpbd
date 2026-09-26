@@ -87,8 +87,11 @@ footer { color:var(--gray); font-size:13px; text-align:center; padding:0 16px 40
   <span class="tag">PDF 13쪽 · 검증</span>
   <h2>비교 2 · 로봇 ↔ 물체 — 잎 잡고 들어 올리기 (ficus)</h2>
   <p class="lead">가장 바깥 잎을 위에서 집어 12 cm 들어 올리고, 1.5 s 들고 있다가 옆에 내려놓는다.</p>
-  <img class="still" src="assets/ficus_lift.png" alt="ficus 잎 잡고 들기 — 잡기 전, 들어 올림, 내려놓음, 놓은 뒤 (왼쪽 Isaac 기본, 오른쪽 APG-GS XPBD)">
-  <p class="note">Isaac Sim 헤드리스 렌더 장면 (잡기 전 → 들어 올림 → 내려놓음 → 놓은 뒤).</p>
+  <div class="lr"><span class="l">왼쪽 · Isaac 기본</span><span class="r">오른쪽 · APG-GS XPBD</span></div>
+  <video controls playsinline muted preload="metadata" poster="assets/ficus_compare.jpg">
+   <source src="assets/ficus_compare.mp4" type="video/mp4">
+  </video>
+  <p class="note">Isaac Sim GUI 녹화 (같은 동작을 여러 번 반복). 녹화 속도는 실제 시간보다 느리다.</p>
   <div class="cards">
    <div class="card"><b>가우시안 단위의 국소 grasp</b><span class="m">APG-GS</span> 손가락 사이에 보이는 가우시안 970개를 손에 부착<br><span class="b">Isaac 기본</span> 볼록 껍질이 잎 사이 빈 곳까지 채워, 보이는 잎과 잡히는 영역이 다름</div>
    <div class="card"><b>하중에 따른 국소 변형 · 복원</b><span class="m">APG-GS</span> 무게를 받는 가지만 늘어남 (2배 넘게 늘어난 연결 0.14%), 내려놓으면 다시 섬<br><span class="b">Isaac 기본</span> 강체 하나라 모양 변화 없음</div>
