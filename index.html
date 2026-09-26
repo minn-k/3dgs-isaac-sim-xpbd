@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>3DGS-to-Sim Portfolio</title>
-<meta name="description" content="권상민 · NC AI Digital Twin R&D 포트폴리오 — 3DGS 디지털 트윈 · 가우시안 그래프 물리(APG-GS) × Isaac Sim">
+<meta name="description" content="권상민 · Digital Twin R&D 포트폴리오 데모 영상 — 3DGS 디지털 트윈 · 가우시안 그래프 물리(APG-GS) × Isaac Sim">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-:root { --navy:#10263d; --navy2:#173550; --coral:#e76a4c; --blue:#2878b5; --ink:#1b2733; --gray:#5c6c7e; --line:#dbe3ea; --bg:#f3f6f9; }
+:root { --navy:#10263d; --coral:#e76a4c; --blue:#2878b5; --ink:#1b2733; --gray:#5c6c7e; --line:#dbe3ea; --bg:#f3f6f9; }
 * { box-sizing:border-box; }
 body { margin:0; background:var(--bg); color:var(--ink); font-family:"Noto Sans KR","Malgun Gothic",system-ui,sans-serif; line-height:1.6; }
 header { background:var(--navy); color:#fff; padding:56px 16px 44px; }
@@ -26,18 +26,10 @@ nav.toc { display:flex; flex-wrap:wrap; gap:8px 18px; margin-top:22px; font-size
 nav.toc a { color:#9cc4e8; text-decoration:none; }
 main { padding:36px 0 60px; }
 section { background:#fff; border:1px solid var(--line); border-radius:14px; padding:24px; margin:0 0 28px; scroll-margin-top:16px; }
-.tag { display:inline-block; font-size:12px; font-weight:700; color:var(--coral); background:#fdece7; border-radius:999px; padding:3px 10px; }
-h2 { font-size:22px; margin:10px 0 4px; }
-.lead { color:var(--gray); margin:0 0 16px; }
-video, .still { width:100%; display:block; border-radius:10px; background:#000; }
-.still { background:#fff; border:1px solid var(--line); }
+h2 { font-size:22px; margin:0 0 12px; }
+video { width:100%; display:block; border-radius:10px; background:#000; }
 .lr { display:flex; justify-content:space-between; font-size:13px; font-weight:700; margin:0 0 8px; }
 .lr .l { color:var(--blue); } .lr .r { color:var(--coral); }
-.cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:12px; margin-top:16px; }
-.card { background:var(--bg); border-radius:10px; padding:14px 16px; font-size:14px; }
-.card b { display:block; margin-bottom:4px; }
-.card .m { color:var(--coral); font-weight:700; } .card .b { color:var(--blue); font-weight:700; }
-.note { font-size:13px; color:var(--gray); margin-top:10px; }
 footer { color:var(--gray); font-size:13px; text-align:center; padding:0 16px 40px; }
 @media (max-width:600px) { header { padding:40px 0 32px; } section { padding:16px; } }
 </style>
@@ -45,58 +37,48 @@ footer { color:var(--gray); font-size:13px; text-align:center; padding:0 16px 40
 <body>
 <header>
  <div class="wrap">
-  <div class="kicker">NC AI · DIGITAL TWIN R&amp;D PORTFOLIO</div>
+  <div class="kicker">DIGITAL TWIN R&amp;D PORTFOLIO</div>
   <h1>3DGS-to-Sim: Graph-Based Deformable Digital Twins for Robot Interaction</h1>
   <p class="sub">로봇이 만지고 변형하는 3DGS 디지털 트윈 · 가우시안 그래프 물리(APG-GS) × Isaac Sim</p>
   <p class="sub">3DGS · OpenUSD · Isaac Sim 6.1 (PhysX / Fabric) · CUDA XPBD DLL · Python (ctypes)</p>
   <div class="name">권상민 · Sangmin Kwon</div>
   <div class="btns">
-   <a class="btn primary" href="assets/KwonSangmin_NCAI_Portfolio.pdf" target="_blank" rel="noopener">포트폴리오 PDF 보기</a>
-   <a class="btn ghost" href="https://github.com/minn-k/3dgs-isaac-sim-xpbd/releases/download/portfolio-v1/KwonSangmin_NCAI_Portfolio.pptx">PPTX 다운로드 <small>영상 포함 · 약 240 MB</small></a>
+   <a class="btn primary" href="assets/KwonSangmin_Portfolio.pdf" target="_blank" rel="noopener">포트폴리오 PDF 보기</a>
+   <a class="btn ghost" href="https://github.com/minn-k/3dgs-isaac-sim-xpbd/releases/download/portfolio-v1/KwonSangmin_Portfolio.pptx">PPTX 다운로드 <small>영상 포함 · 약 240 MB</small></a>
   </div>
-  <nav class="toc"><a href="#prior">선행 연구 데모</a><a href="#wolf">비교 1 · 물체 ↔ 환경 (wolf)</a><a href="#ficus">비교 2 · 로봇 ↔ 물체 (ficus)</a></nav>
+  <nav class="toc"><a href="#prior">선행 연구 · APG-GS</a><a href="#wolf">비교 1 · 물체 ↔ 환경</a><a href="#ficus">비교 2 · 로봇 ↔ 물체</a><a href="#lego">비교 3 · 로봇 ↔ 물체</a></nav>
  </div>
 </header>
 <main class="wrap">
  <section id="prior">
-  <span class="tag">PDF 1쪽 · 선행 연구</span>
-  <h2>APG-GS — 메쉬 없는 3DGS 변형</h2>
-  <p class="lead">가우시안 그래프 위의 CUDA XPBD 로 3DGS 를 직접 변형하고, 변형에 맞춰 렌더링 공분산을 바꾼다 (연구용 SIBR 뷰어).</p>
+  <h2>선행 연구 · APG-GS — 메쉬 없는 3DGS 변형</h2>
   <video controls playsinline muted preload="metadata" poster="assets/prior_research_demo.jpg">
    <source src="assets/prior_research_demo.mp4" type="video/mp4">
   </video>
  </section>
 
  <section id="wolf">
-  <span class="tag">PDF 12쪽 · 검증</span>
   <h2>비교 1 · 물체 ↔ 환경 — 누르기 · 던지기 (wolf)</h2>
-  <p class="lead">같은 3DGS 자산에 같은 낙하 · 압축 · 충돌 조건. 왼쪽은 Isaac Sim 기본 방식(볼록 껍질 강체 하나, 초록 선), 오른쪽은 가우시안 물리 층(APG-GS XPBD).</p>
   <div class="lr"><span class="l">왼쪽 · Isaac 기본</span><span class="r">오른쪽 · APG-GS XPBD</span></div>
   <video controls playsinline muted preload="metadata" poster="assets/wolf_compare.jpg">
    <source src="assets/wolf_compare.mp4" type="video/mp4">
   </video>
-  <div class="cards">
-   <div class="card"><b>렌더링 형상에 정합된 접촉</b><span class="m">APG-GS</span> 그려지는 가우시안 타원체로 접촉 판정<br><span class="b">Isaac 기본</span> 볼록 껍질이 다리 사이 · 꼬리 밑 빈 곳까지 채움</div>
-   <div class="card"><b>눌렸다가 복원</b><span class="m">APG-GS</span> 높이 27.0 → 판에 눌려 20.2 → 떼면 27.1 cm<br><span class="b">Isaac 기본</span> 강체라 30.2 cm 그대로, 판이 껍질에 6.7 cm 겹침</div>
-   <div class="card"><b>국소 변형 + 양방향 충격</b><span class="m">APG-GS</span> 맞은 곳만 눌리고, 반작용이 PhysX 물체로 돌아가 공 · 큐브가 튕김<br><span class="b">Isaac 기본</span> 몸 전체가 통째로 밀리고 기울어짐</div>
-  </div>
-  <p class="note">Isaac Sim GUI 녹화 (RTX 실시간 렌더). 녹화 속도는 실제 시간보다 느리다.</p>
  </section>
 
  <section id="ficus">
-  <span class="tag">PDF 13쪽 · 검증</span>
   <h2>비교 2 · 로봇 ↔ 물체 — 잎 잡고 들어 올리기 (ficus)</h2>
-  <p class="lead">가장 바깥 잎을 위에서 집어 12 cm 들어 올리고, 1.5 s 들고 있다가 옆에 내려놓는다.</p>
   <div class="lr"><span class="l">왼쪽 · Isaac 기본</span><span class="r">오른쪽 · APG-GS XPBD</span></div>
   <video controls playsinline muted preload="metadata" poster="assets/ficus_compare.jpg">
    <source src="assets/ficus_compare.mp4" type="video/mp4">
   </video>
-  <p class="note">Isaac Sim GUI 녹화 (같은 동작을 여러 번 반복). 녹화 속도는 실제 시간보다 느리다.</p>
-  <div class="cards">
-   <div class="card"><b>가우시안 단위의 국소 grasp</b><span class="m">APG-GS</span> 손가락 사이에 보이는 가우시안 970개를 손에 부착<br><span class="b">Isaac 기본</span> 볼록 껍질이 잎 사이 빈 곳까지 채워, 보이는 잎과 잡히는 영역이 다름</div>
-   <div class="card"><b>하중에 따른 국소 변형 · 복원</b><span class="m">APG-GS</span> 무게를 받는 가지만 늘어남 (2배 넘게 늘어난 연결 0.14%), 내려놓으면 다시 섬<br><span class="b">Isaac 기본</span> 강체 하나라 모양 변화 없음</div>
-   <div class="card"><b>물체의 자유로운 자세 반응</b><span class="m">APG-GS</span> 잡은 가지 아래로 무게중심이 오도록 화분째 매달려 흔들림<br><span class="b">Isaac 기본</span> 고정 조인트가 자세까지 묶어 선 자세 그대로 들림</div>
-  </div>
+ </section>
+
+ <section id="lego">
+  <h2>비교 3 · 로봇 ↔ 물체 — 잡고 들어 올리기 (lego)</h2>
+  <div class="lr"><span class="l">왼쪽 · Isaac 기본</span><span class="r">오른쪽 · APG-GS XPBD</span></div>
+  <video controls playsinline muted preload="metadata" poster="assets/lego_compare.jpg">
+   <source src="assets/lego_compare.mp4" type="video/mp4">
+  </video>
  </section>
 </main>
 <footer>© 권상민 · Sangmin Kwon — 3DGS-to-Sim portfolio</footer>
