@@ -1,68 +1,108 @@
-# 3DGS → OpenUSD → Isaac Sim: GPU XPBD Runtime
+<h1 align="center">3DGS → OpenUSD → Isaac Sim</h1>
 
-A research prototype for turning a reconstructed 3D Gaussian Splatting model into an interactive digital-twin scene. It connects a graph-based CUDA deformation solver to an OpenUSD scene in NVIDIA Isaac Sim and renders the deformed Gaussians through Fabric.
+<p align="center"><strong>GPU XPBD runtime for interactive 3D Gaussian Splatting scenes</strong></p>
 
-## Demonstration
+<p align="center">
+  <a href="https://minn-k.github.io/3d-representation-portfolio/"><img src="https://img.shields.io/badge/Portfolio-Website-green?logo=googlechrome&logoColor=white" alt="Portfolio"></a>
+  <a href="https://github.com/minn-k/apg-gs-chainmail"><img src="https://img.shields.io/badge/Earlier_work-APG--GS_ChainMail-blue?logo=github" alt="APG-GS ChainMail"></a>
+  <img src="https://img.shields.io/badge/Platform-Windows_11-0078D6?logo=windows&logoColor=white" alt="Windows 11">
+  <img src="https://img.shields.io/badge/Runtime-NVIDIA_Isaac_Sim-76B900?logo=nvidia&logoColor=white" alt="NVIDIA Isaac Sim">
+</p>
 
-Two Franka arms select Gaussian groups at opposite ends of a Wolf model, grasp them, pull outward, twist around the line between the grippers, return, and release. The public runtime also exposes a control window for automatic and manual two-arm commands.
+## Overview
 
-This is a geometry-interaction prototype. A grasp attaches selected Gaussian groups to gripper targets; it is not a force-accurate tactile grasp simulator.
+This research prototype turns a reconstructed **3D Gaussian Splatting (3DGS)** scene into an interactive digital-twin
+asset. A CUDA XPBD solver deforms a Gaussian graph, OpenUSD carries the scene into NVIDIA Isaac Sim, and Fabric writes
+the updated Gaussian attributes for rendering. The focus is not force-accurate grasping; it is a practical bridge
+between robot interaction, GPU deformation, and a Gaussian renderer.
 
-## Runtime data flow
+## Highlights
+
+- **Two-arm interaction.** Two Franka arms select Gaussian groups on a Wolf asset, grasp, pull, twist, return, and
+  release them through an Isaac Sim control panel.
+- **Gaussian-aware deformation.** The runtime updates position, orientation, and scale, rather than moving only
+  Gaussian centres.
+- **GPU-resident solver state.** Graph constraints and XPBD state remain on the GPU between physics steps.
+- **OpenUSD / Fabric integration.** A generated OpenUSD scene hosts the Gaussian splat; deformed attributes are
+  written into the Isaac-side rendering path.
+- **Public source path.** The CUDA solver and bridge are included. Large reconstructed assets, generated PLY files,
+  and binaries are intentionally excluded.
+
+## System flow
 
 ~~~text
-One-time setup
-3DGS PLY + graph ── CPU → GPU ── CUDA XPBD solver
-        └──────── OpenUSD Gaussian Splat scene
+One-time preparation
+3DGS PLY + Gaussian graph ── CPU → GPU ── CUDA XPBD solver
+        └──────── OpenUSD Gaussian-splat scene
 
-Every physics step
-PhysX robot and collision pose ── CPU → GPU ── solver step
-
-Every rendered frame
+Interactive loop
+PhysX gripper pose / collision input ── CPU → GPU ── solver step
 deformed position / orientation / scale ── GPU → CPU ── Fabric ── Isaac 3DGS renderer
 ~~~
 
-The solver state stays on GPU between steps. The current bridge copies robot inputs to GPU at every physics step and reads deformed Gaussian attributes back to CPU once per changed rendered frame before writing Fabric attributes. See [the architecture note](docs/architecture.md) for the exact boundary.
+The current prototype keeps the solver state on GPU, copies robot input to GPU at each physics step, and reads updated
+Gaussian attributes back once per changed render frame. See [docs/architecture.md](docs/architecture.md) for the exact
+CPU/GPU boundary and data ownership.
 
 ## Quick start
 
-1. Install Isaac Sim 6.1 and a compatible NVIDIA CUDA Toolkit. On first use, Isaac Sim must be able to download the Franka asset from NVIDIA Omniverse content, unless that asset is already cached or redirected through your configured asset source.
-2. Build the Windows DLL from source using [the build guide](docs/build.md), or add a matching Windows release asset to the bin folder.
-3. Put a redistributable Wolf asset bundle in examples/wolf. The source repository intentionally excludes generated PLY, NPZ, and USD splat assets. See [the data policy](docs/data.md).
-4. Set ISAAC_SIM_ROOT and start Isaac Sim:
+### Requirements
 
-~~~bat
-scripts\launch_isaac_safe.bat
-~~~
+- Windows 11, NVIDIA GPU, NVIDIA Isaac Sim 6.1, and a compatible CUDA Toolkit
+- Visual Studio C++ Build Tools and CMake for the native DLL
+- A redistributable 3DGS asset bundle. The included workflow uses the Wolf scene described in
+  [examples/wolf/README.md](examples/wolf/README.md).
 
-5. In Isaac Sim, open examples/wolf/wolf_scene.usda.
-6. In Window → Script Editor, replace the path below with your clone path and execute it:
+### Run the supplied workflow
 
-~~~python
-import os
-os.environ["APG_3DGS_ISAAC_ROOT"] = r"C:\path\to\3dgs-isaac-sim-xpbd"
-exec(open(os.path.join(os.environ["APG_3DGS_ISAAC_ROOT"], "src", "run_duo.py"), encoding="utf-8").read())
-~~~
+1. Build the Windows DLL with [docs/build.md](docs/build.md).
+2. Put the prepared Wolf asset bundle in <code>examples/wolf/</code> as described in [docs/data.md](docs/data.md).
+3. Set <code>ISAAC_SIM_ROOT</code>, then start Isaac Sim:
 
-7. Press Play. Select Manual in the control window to move one or both grippers, grasp, pull, twist, and release.
+   ~~~bat
+   scripts\launch_isaac_safe.bat
+   ~~~
+
+4. Open <code>examples/wolf/wolf_scene.usda</code> in **Window → Script Editor**, replace the path and run:
+
+   ~~~python
+   import os
+   os.environ["APG_3DGS_ISAAC_ROOT"] = r"C:\path\to\3dgs-isaac-sim-xpbd"
+   exec(open(os.path.join(os.environ["APG_3DGS_ISAAC_ROOT"], "src", "run_duo.py"), encoding="utf-8").read())
+   ~~~
+
+5. Press Play. The control window provides automatic and manual commands for selecting, grasping, pulling, twisting,
+   and releasing Gaussian groups.
 
 ## Repository map
 
 ~~~text
-src/       Isaac runtime, CUDA bridge, collision conversion, and two-arm control
-native/    C API bridge and CUDA solver source used to build the DLL
+src/       Isaac runtime, CUDA bridge, collision conversion, and two-arm controls
+native/    C API bridge and CUDA XPBD solver source
 tools/     3DGS preparation, graph-order conversion, and OpenUSD conversion
-examples/  light scene metadata and asset-bundle instructions
-docs/      architecture, setup, build, data policy, and media policy
+examples/  lightweight scene metadata and asset-bundle instructions
+docs/      setup, build, architecture, data, and media-policy notes
 ~~~
 
-## Scope and reproducibility
+## Release scope
 
-- The public runtime supports the two-arm Wolf interaction workflow.
-- The repository does not contain raw scans, faces, training images, learned 3DGS models, generated PLY, graph, or splat USD assets, compiled DLLs, or Wolf-derived screenshots.
-- The native source is included so the Windows DLL can be rebuilt from a clean checkout.
-- Fabric is used as a CPU-written runtime attribute interface in this prototype. It is not a zero-copy CUDA-to-Fabric path.
+This is a focused research runtime, not a general-purpose robot grasp simulator.
 
-## Related work
+- The public workflow supports the two-arm Wolf interaction path.
+- No raw scans, training images, learned 3DGS models, generated PLY/NPZ/USD splats, compiled DLLs, or Wolf-derived
+  screenshots are tracked.
+- Fabric is used as a CPU-written attribute interface in this implementation; it is not a zero-copy CUDA-to-Fabric
+  path.
+- The native source is included so a compatible Windows DLL can be rebuilt from a clean checkout.
 
-[apg-gs-chainmail](https://github.com/minn-k/apg-gs-chainmail) contains the earlier ChainMail-focused viewer and paper scope. This repository contains the later OpenUSD, Isaac Sim, CUDA XPBD, and two-arm interaction integration.
+## Related projects
+
+- [APG-GS ChainMail](https://github.com/minn-k/apg-gs-chainmail): the earlier SIBR Gaussian-viewer deformation overlay.
+- [Editable Generative 3D Gaussians](https://github.com/minn-k/3d-representation-portfolio): generative 3D assets,
+  semantic parts, and portfolio demonstrations.
+
+## License and attribution
+
+This repository contains derivative components from SIBR and 3D Gaussian Splatting. See [LICENSE.md](LICENSE.md),
+[LICENSES](LICENSES), and [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md); retain their notices when redistributing
+modifications.
