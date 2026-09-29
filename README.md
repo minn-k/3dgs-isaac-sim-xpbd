@@ -3,7 +3,7 @@
 <p align="center"><strong>GPU XPBD runtime for interactive 3D Gaussian Splatting scenes</strong></p>
 
 <p align="center">
-  <a href="https://minn-k.github.io/3d-representation-portfolio/"><img src="https://img.shields.io/badge/Portfolio-Website-green?logo=googlechrome&logoColor=white" alt="Portfolio"></a>
+  <a href="https://minn-k.github.io/3dgs-isaac-sim-xpbd/"><img src="https://img.shields.io/badge/Project-Website-green?logo=googlechrome&logoColor=white" alt="Project website"></a>
   <a href="https://github.com/minn-k/apg-gs-chainmail"><img src="https://img.shields.io/badge/Earlier_work-APG--GS_ChainMail-blue?logo=github" alt="APG-GS ChainMail"></a>
   <img src="https://img.shields.io/badge/Platform-Windows_11-0078D6?logo=windows&logoColor=white" alt="Windows 11">
   <img src="https://img.shields.io/badge/Runtime-NVIDIA_Isaac_Sim-76B900?logo=nvidia&logoColor=white" alt="NVIDIA Isaac Sim">
